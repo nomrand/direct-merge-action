@@ -60,10 +60,12 @@ async function merge(): Promise<void> {
 
         break;
 
-      // case 404:
-      //   setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
+      case 404:
+        // setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
 
-      //   break;
+        info(`res.status = ${res.status}`);
+        res.status = 999;
+        break;
 
       default:
         warning(`Merge action has completed, but with an unknown status code: ${res.status}`);
