@@ -3,7 +3,7 @@ import { getOctokit } from '@actions/github';
 import {
   OctokitResponse,
   ReposMergeResponseData,
-  ReposMergeResponse404Data,
+  // ReposMergeResponse404Data,
   ReposMergeResponse409Data,
 } from '@octokit/types';
 
@@ -35,13 +35,13 @@ async function merge(): Promise<void> {
 
   info(`Running direct GitHub merge of ${owner}/${repo} ${head} -> ${base}`);
 
-  const res: OctokitResponse<ReposMergeResponseData | ReposMergeResponse404Data | ReposMergeResponse409Data> = (await octokit.repos.merge({
+  const res: OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data> = (await octokit.repos.merge({
     owner,
     repo,
     base,
     head,
     commit_message: commitMessage,
-  })) as OctokitResponse<ReposMergeResponseData | ReposMergeResponse404Data | ReposMergeResponse409Data>;
+  })) as OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data>;
 
   if (res) {
     switch (res.status) {
@@ -60,11 +60,10 @@ async function merge(): Promise<void> {
 
         break;
 
-      case 404:
-//        setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
-        info(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
+      // case 404:
+      //   setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
 
-        break;
+      //   break;
 
       default:
         warning(`Merge action has completed, but with an unknown status code: ${res.status}`);
