@@ -103,13 +103,13 @@ describe('run', () => {
   //   expect(setFailedMock).toHaveBeenCalledWith('Branch not found. ');
   // });
 
-  it('should fail the action in case of an error during merge', async () => {
-    octokitMock.repos.merge.mockRejectedValueOnce(new Error('Something went wrong') as jest.RejectedValue<unknown>);
+  // it('should fail the action in case of an error during merge', async () => {
+  //   octokitMock.repos.merge.mockRejectedValueOnce(new Error('Something went wrong') as jest.RejectedValue<unknown>);
 
-    await run();
+  //   await run();
 
-    expect(setFailedMock).toHaveBeenCalledWith('An unexpected error occurred: Something went wrong');
-  });
+  //   expect(setFailedMock).toHaveBeenCalledWith('An unexpected error occurred: Something went wrong');
+  // });
 
   it('should log a warning if merge was completed with an unknown status code', async () => {
     octokitMock.repos.merge.mockReturnValueOnce({

@@ -35,43 +35,46 @@ async function merge(): Promise<void> {
 
   info(`Running direct GitHub merge of ${owner}/${repo} ${head} -> ${base}`);
 
-  const res: OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data> = (await octokit.repos.merge({
-    owner,
-    repo,
-    base,
-    head,
-    commit_message: commitMessage,
-  })) as OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data>;
+  try {
 
-  if (res) {
-    switch (res.status) {
-      case 201:
-        info(`Merged ${head} -> ${base} (${(res as OctokitResponse<ReposMergeResponseData>).data?.sha || ''})`);
+    const res: OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data> = (await octokit.repos.merge({
+      owner,
+      repo,
+      base,
+      head,
+      commit_message: commitMessage,
+    })) as OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data>;
 
-        break;
+    if (res) {
+      switch (res.status) {
+        case 201:
+          info(`Merged ${head} -> ${base} (${(res as OctokitResponse<ReposMergeResponseData>).data?.sha || ''})`);
 
-      case 204:
-        info('Target branch already contains changes from source branch. Nothing to merge');
+          break;
 
-        break;
+        case 204:
+          info('Target branch already contains changes from source branch. Nothing to merge');
 
-      case 409:
-        setFailed(`Merge conflict. ${(res as OctokitResponse<ReposMergeResponse409Data>).data?.message || ''}`);
+          break;
 
-        break;
+        case 409:
+          setFailed(`Merge conflict. ${(res as OctokitResponse<ReposMergeResponse409Data>).data?.message || ''}`);
 
-      case 404:
-        // setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
+          break;
 
-        info(`res.status = ${res.status}`);
-        res.status = 999;
-        break;
+        // case 404:
+        //   setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
 
-      default:
-        warning(`Merge action has completed, but with an unknown status code: ${res.status}`);
+        //   break;
+
+        default:
+          warning(`Merge action has completed, but with an unknown status code: ${res.status}`);
+      }
+    } else {
+      return setFailed('An unknown error occurred during merge operation (empty response)');
     }
-  } else {
-    return setFailed('An unknown error occurred during merge operation (empty response)');
+  } catch(e) {
+    warning(`Merge action has completed, but with an unknown status code: ${e}`);
   }
 }
 
