@@ -3,7 +3,7 @@ import { getOctokit } from '@actions/github';
 import {
   OctokitResponse,
   ReposMergeResponseData,
-  // ReposMergeResponse404Data,
+  ReposMergeResponse404Data,
   ReposMergeResponse409Data,
 } from '@octokit/types';
 
@@ -37,13 +37,13 @@ async function merge(): Promise<void> {
 
   try {
 
-    const res: OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data> = (await octokit.repos.merge({
+    const res: OctokitResponse<ReposMergeResponseData | ReposMergeResponse404Data | ReposMergeResponse409Data> = (await octokit.repos.merge({
       owner,
       repo,
       base,
       head,
       commit_message: commitMessage,
-    })) as OctokitResponse<ReposMergeResponseData | ReposMergeResponse409Data>;
+    })) as OctokitResponse<ReposMergeResponseData | ReposMergeResponse404Data | ReposMergeResponse409Data>;
 
     if (res) {
       switch (res.status) {
@@ -80,6 +80,10 @@ async function merge(): Promise<void> {
 
 export async function run(): Promise<void> {
   return merge().catch((error: Error): void => {
-    setFailed(`An unexpected error occurred: ${error.message}`);
+    if(error.message.indexOf(' does not exist') >= 0){
+      warning(`Branch not found: ${error.message}`);
+    } else {
+      setFailed(`An unexpected error occurred: ${error.message}`);
+    }
   });
 }
