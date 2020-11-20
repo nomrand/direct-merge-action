@@ -62,7 +62,7 @@ async function merge(): Promise<void> {
 
       case 404:
 //        setFailed(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
-        warning(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
+        info(`Branch not found. ${(res as OctokitResponse<ReposMergeResponse404Data>).data?.message || ''}`);
 
         break;
 

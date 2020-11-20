@@ -90,7 +90,7 @@ describe('run', () => {
 
     await run();
 
-    expect(loggerMock.warning).toHaveBeenCalledWith('Branch not found. A message ABC');
+    expect(loggerMock.info).toHaveBeenCalledWith('Branch not found. A message ABC');
   });
 
   it('should work for 404 status in case of empty/nullish data', async () => {
@@ -100,7 +100,7 @@ describe('run', () => {
 
     await run();
 
-    expect(loggerMock.warning).toHaveBeenCalledWith('Branch not found. ');
+    expect(loggerMock.info).toHaveBeenCalledWith('Branch not found. ');
   });
 
   it('should fail the action in case of an error during merge', async () => {
